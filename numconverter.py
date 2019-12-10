@@ -1,6 +1,7 @@
 import string
 
-def decimal_to_binary(number, length = 4):
+
+def decimal_to_binary(number, length=4):
     '''
     Converts a decimal number into a binary number.
     >>> decimal_to_binary(1996)
@@ -14,8 +15,9 @@ def decimal_to_binary(number, length = 4):
 
     while len(result) < length:
         result += '0'
-    
+
     return result[::-1]
+
 
 def decimal_to_hexadecimal(number):
     '''
@@ -36,6 +38,7 @@ def decimal_to_hexadecimal(number):
     else:
         return '0'
 
+
 def binary_to_decimal(number):
     '''
     Converts a binary number to a decimal number.
@@ -49,6 +52,7 @@ def binary_to_decimal(number):
 
     return result
 
+
 def binary_to_hexadecimal(number):
     '''
     Converts a binary number to a hexadecimal number.
@@ -56,6 +60,7 @@ def binary_to_hexadecimal(number):
     '7CC'
     '''
     return decimal_to_hexadecimal(binary_to_decimal(number))
+
 
 def hexadecimal_to_decimal(number):
     '''
@@ -73,6 +78,7 @@ def hexadecimal_to_decimal(number):
         result += int(bit) * pow(16, weight)
 
     return result
+
 
 def hexadecimal_to_binary(number):
     '''

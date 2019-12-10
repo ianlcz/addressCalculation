@@ -1,4 +1,7 @@
+import os
+import string
 from numconverter import *
+
 
 def convert_decimal_to_binary(string):
     binary_string = []
@@ -6,21 +9,39 @@ def convert_decimal_to_binary(string):
         binary_string.append(decimal_to_binary(int(element), 8))
     return '.'.join(binary_string)
 
+
 def convert_binary_to_decimal(string):
     decimal_string = []
     for element in string.split('.'):
         decimal_string.append(str(binary_to_decimal(element)))
     return '.'.join(decimal_string)
 
-ip = "192.168.0.1"
+
+def verify_string(address, minimun, maximum, minimum_length, maximum_length):
+    if not address or len(address) < minimum_length or len(
+            address) > maximum_length:
+        return True
+    for element in address:
+        if element not in string.digits + '.':
+            return True
+    for element in address.split('.'):
+        if int(element) < minimun or int(element) > maximum:
+            return True
+
+
+ip = ''
+while verify_string(ip, 0, 255, 7, 15):
+    ip = input("Entrez une adresse IP: ")
 binary_ip = convert_decimal_to_binary(ip)
 
 # Rewriting of the Netmask
-abr_Netmask = 24
+CIDR = ''
+while verify_string(CIDR, 0, 32, 1, 2):
+    CIDR = input("Entrez le masque de sous-réseaux: /")
 list_origin_binary_Netmask = []
-for element in range(abr_Netmask):
+for element in range(int(CIDR)):
     list_origin_binary_Netmask.append('1')
-for element in range(32 - abr_Netmask):
+for element in range(32 - int(CIDR)):
     list_origin_binary_Netmask.append('0')
 list_binary_Netmask = []
 counter = 0
@@ -30,13 +51,14 @@ for index in range(len(list_origin_binary_Netmask)):
     if counter == 8 and index != 31:
         list_binary_Netmask.append('.')
         counter = 0
-binary_Netmask=''.join(list_binary_Netmask)
-Netmask=convert_binary_to_decimal(binary_Netmask)
+binary_Netmask = ''.join(list_binary_Netmask)
+Netmask = convert_binary_to_decimal(binary_Netmask)
 
 # Calculation of the Network address
 list_networkAddress = []
 for index in range(len(ip.split('.'))):
-    list_networkAddress.append(str(binary_to_decimal(decimal_to_binary(int(ip.split('.')[index]) & int(Netmask.split('.')[index]), 8))))
+    list_networkAddress.append(str(binary_to_decimal(decimal_to_binary(
+        int(ip.split('.')[index]) & int(Netmask.split('.')[index]), 8))))
 networkAddress = '.'.join(list_networkAddress)
 binary_networkAddress = convert_decimal_to_binary(networkAddress)
 
@@ -55,11 +77,22 @@ binary_usableAddresses = []
 for element in binary_Netmask:
     if element == '0':
         binary_usableAddresses.append(element)
-numberOfUsableAddresses = int(convert_binary_to_decimal(''.join(binary_usableAddresses).replace('0', '1'))) - 1
+numberOfUsableAddresses = int(
+    convert_binary_to_decimal(
+        ''.join(binary_usableAddresses).replace(
+            '0', '1'))) - 1
 
 # Definition of the address range
-minimalAddress = networkAddress[:-1] + str(int(networkAddress.split('.')[-1]) + 1)
-maximalAddress = broadcastAddress[:-3] + str(int(broadcastAddress.split('.')[-1]) - 1)
+minimalAddress = networkAddress[:-1] + \
+    str(int(networkAddress.split('.')[-1]) + 1)
+maximalAddress = broadcastAddress[:-3] + str(int(broadcastAddress.split('.')[-1]) - 1) if len(
+    broadcastAddress[-3:-2]) == 1 else broadcastAddress[:-2] + str(int(broadcastAddress.split('.')[-1]) - 1)
 addressRange = minimalAddress + " - " + maximalAddress
 
-print(f"Adresse IP\t\t\t{ip}\nMasque de sous-réseaux\t\t{Netmask}\nAdresse du réseau\t\t{networkAddress}\nAdresse de broadcast\t\t{broadcastAddress}\nNombre d'adresses utilisables\t{numberOfUsableAddresses}\nPlage d'adresses\t\t{addressRange}")
+if CIDR == '32':
+    print(f"\nAdresse IP\t\t\t{ip}\nMasque de sous-réseaux\t\t{Netmask}")
+elif CIDR == '31':
+    print(
+        f"\nPlage d'adresses\t\t{networkAddress} - {broadcastAddress}\nMasque de sous-réseaux\t\t{Netmask}")
+else:
+    print(f"\nAdresse IP\t\t\t{ip}\nMasque de sous-réseaux\t\t{Netmask}\nAdresse du réseau\t\t{networkAddress}\nAdresse de broadcast\t\t{broadcastAddress}\nNombre d'adresses utilisables\t{numberOfUsableAddresses}\nPlage d'adresses\t\t{addressRange}")

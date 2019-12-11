@@ -16,6 +16,16 @@ def convert_binary_to_decimal(string):
         decimal_string.append(str(binary_to_decimal(element)))
     return '.'.join(decimal_string)
 
+def determine_limit_range(address, isBroadcast = False):
+    address = address.split('.')
+    last = address.pop(-1)
+    copyAddress = address
+    if isBroadcast:
+        copyAddress.append(str(int(last)-1))
+    else:
+        copyAddress.append(str(int(last)+1))
+    return('.'.join(copyAddress))
+
 
 def determine_limit_range(address, isBroadcast=False):
     address = address.split('.')

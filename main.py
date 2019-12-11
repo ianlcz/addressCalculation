@@ -16,6 +16,16 @@ def convert_binary_to_decimal(string):
         decimal_string.append(str(binary_to_decimal(element)))
     return '.'.join(decimal_string)
 
+def determine_limit_range(address, isBroadcast = False):
+    address = address.split('.')
+    last = address.pop(-1)
+    copyAddress = address
+    if isBroadcast:
+        copyAddress.append(str(int(last)-1))
+    else:
+        copyAddress.append(str(int(last)+1))
+    return('.'.join(copyAddress))
+
 
 def verify_string(address, minimun, maximum, minimum_length, maximum_length):
     if not address or len(address) < minimum_length or len(
@@ -83,11 +93,7 @@ numberOfUsableAddresses = int(
             '0', '1'))) - 1
 
 # Definition of the address range
-minimalAddress = networkAddress[:-1] + \
-    str(int(networkAddress.split('.')[-1]) + 1)
-maximalAddress = broadcastAddress[:-3] + str(int(broadcastAddress.split('.')[-1]) - 1) if len(
-    broadcastAddress[-3:-2]) == 1 else broadcastAddress[:-2] + str(int(broadcastAddress.split('.')[-1]) - 1)
-addressRange = minimalAddress + " - " + maximalAddress
+addressRange = determine_limit_range(networkAddress) + " - " + determine_limit_range(broadcastAddress, True)
 
 if CIDR == '32':
     print(f"\nAdresse IP\t\t\t{ip}\nMasque de sous-réseaux\t\t{Netmask}")
